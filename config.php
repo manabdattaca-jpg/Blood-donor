@@ -1,26 +1,15 @@
 <?php
-// config.php
+$serverName = "tcp:yourserver.database.windows.net,1433"; 
+$database   = "YourDatabaseName";
+$username   = "youradmin"; 
+$password   = "YourStrongPassword";
 
-// Path to SQLite database
-define('DB_PATH', __DIR__ . '/data/donations.db');
-
-// Start session
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+// Use SQL Server driver
+try {
+    $conn = new PDO("sqlsrv:server=$serverName;Database=$database", $username, $password);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // echo "Connected successfully"; // for testing
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
 }
-
-/**
- * Database connection (SQLite)
- */
-function get_db(): PDO {
-    $dbFile = DB_PATH;
-    $dir = dirname($dbFile);
-
-    if (!is_dir($dir)) {
-        mkdir($dir, 0755, true);
-    }
-
-    $pdo = new PDO('sqlite:' . $dbFile);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    return $pdo;
-}
+?>
